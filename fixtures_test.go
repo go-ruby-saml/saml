@@ -71,17 +71,18 @@ func loadIdPKeyStore(t *testing.T) idpKeyStore {
 // responseOpts parametrizes fixture generation so each invalid variant can be
 // produced from the same signed template.
 type responseOpts struct {
-	issuer       string
-	audience     string
-	destination  string
-	inResponseTo string
-	notBefore    time.Time
-	notOnOrAfter time.Time
-	status       string
-	tamper       bool // corrupt the assertion after signing
-	twoAssertion bool // emit two assertions
-	signResponse bool // sign the Response element instead of the Assertion
-	signWith     dsig.X509KeyStore
+	issuer            string
+	audience          string
+	destination       string
+	inResponseTo      string
+	notBefore         time.Time
+	notOnOrAfter      time.Time
+	status            string
+	tamper            bool // corrupt the assertion after signing
+	twoAssertion      bool // emit two assertions
+	signResponse      bool // additionally sign the Response element
+	assertionUnsigned bool // leave the Assertion unsigned
+	signWith          dsig.X509KeyStore
 }
 
 func defaultOpts() responseOpts {
@@ -127,14 +128,18 @@ func buildResponse(t *testing.T, o responseOpts) string {
 	}
 	signer := dsig.NewDefaultSigningContext(ks)
 
-	// Build and sign the assertion.
+	// Build and (optionally) sign the assertion.
 	adoc := etree.NewDocument()
 	if err := adoc.ReadFromString(assertionXML(o)); err != nil {
 		t.Fatalf("parse assertion: %v", err)
 	}
-	signedAssertion, err := signer.SignEnveloped(adoc.Root())
-	if err != nil {
-		t.Fatalf("sign assertion: %v", err)
+	signedAssertion := adoc.Root()
+	if !o.assertionUnsigned {
+		var err error
+		signedAssertion, err = signer.SignEnveloped(adoc.Root())
+		if err != nil {
+			t.Fatalf("sign assertion: %v", err)
+		}
 	}
 	if o.tamper {
 		// Flip the NameID after signing so the digest no longer matches.

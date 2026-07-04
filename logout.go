@@ -3,6 +3,7 @@ package saml
 import (
 	"encoding/base64"
 	"net/url"
+	"time"
 
 	crewjam "github.com/crewjam/saml"
 )
@@ -19,10 +20,15 @@ type Logoutrequest struct {
 func (l *Logoutrequest) requestXML(s *Settings, nameID string) ([]byte, error) {
 	id := idFunc()
 	l.UUID = id
+	now := nowFunc().UTC()
+	// crewjam marshals NotOnOrAfter as a pointer attribute; leaving it nil makes
+	// encoding/xml panic on the value receiver, so always supply a bound.
+	notOnOrAfter := now.Add(5 * time.Minute)
 	req := crewjam.LogoutRequest{
 		ID:           id,
 		Version:      "2.0",
-		IssueInstant: nowFunc().UTC(),
+		IssueInstant: now,
+		NotOnOrAfter: &notOnOrAfter,
 		Destination:  s.IdPSLOTargetURL,
 	}
 	if s.SPEntityID != "" {
