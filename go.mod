@@ -1,6 +1,6 @@
 module github.com/go-ruby-saml/saml
 
-go 1.26.4
+go 1.27.1
 
 require (
 	github.com/beevik/etree v1.8.1
