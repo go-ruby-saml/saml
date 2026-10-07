@@ -5,7 +5,7 @@
 [![ci](https://github.com/go-ruby-saml/saml/actions/workflows/ci.yml/badge.svg)](https://github.com/go-ruby-saml/saml/actions/workflows/ci.yml)
 [![Docs](https://img.shields.io/badge/docs-mkdocs--material-DC2626)](https://go-ruby-saml.github.io/docs/)
 [![License](https://img.shields.io/badge/license-BSD--3--Clause-blue)](LICENSE)
-[![Go](https://img.shields.io/badge/go-1.26.4%2B-00ADD8)](https://go.dev/dl/)
+[![Go](https://img.shields.io/badge/go-1.27.1%2B-00ADD8)](https://go.dev/dl/)
 [![coverage](https://img.shields.io/badge/coverage-100%25-1a7f37)](#testing)
 
 **A pure-Go (no cgo), MRI-faithful port of Ruby's [`ruby-saml`](https://github.com/SAML-Toolkits/ruby-saml) gem** —
